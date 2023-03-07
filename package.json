@@ -1,0 +1,41 @@
+{
+  "name": "discordbot",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "discordbot",
+  "main": "app.js",
+  "author": {
+    "name": "Nekofoxmiu"
+  },
+  "dependencies": {
+    "asynckit": "^0.4.0",
+    "axios": "^0.25.0",
+    "combined-stream": "^1.0.8",
+    "data-uri-to-buffer": "^4.0.0",
+    "delayed-stream": "^1.0.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.9.0",
+    "fetch-blob": "^3.1.4",
+    "follow-redirects": "^1.14.7",
+    "form-data": "^4.0.0",
+    "formdata-polyfill": "^4.0.10",
+    "mime-db": "^1.51.0",
+    "mime-types": "^2.1.34",
+    "node-domexception": "^1.0.0",
+    "node-fetch": "^3.2.0",
+    "punycode": "^2.1.1",
+    "redis": "^4.1.0",
+    "tr46": "^3.0.0",
+    "tree-kill-promise": "^2.0.8",
+    "ts-mixer": "^6.0.0",
+    "tslib": "^2.3.1",
+    "web-streams-polyfill": "^3.2.0",
+    "webidl-conversions": "^7.0.0",
+    "whatwg-url": "^11.0.0",
+    "ws": "^8.4.2",
+    "zod": "^3.11.6"
+  },
+  "devDependencies": {
+    "caxa": "^2.1.0"
+  }
+}
