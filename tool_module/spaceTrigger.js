@@ -11,6 +11,9 @@ axios.defaults.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64
     'Chrome/96.0.4664.93 Safari/537.36';
 axios.defaults.headers['authorization'] = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
 
+const rootFloder = `${path.dirname(fileURLToPath(import.meta.url))}\\..\\`;
+
+
 try {
     let data = fs.readFileSync(`${rootFloder}\\setting\\auth.json`);
     auth_json = JSON.parse(data.toString());
@@ -61,7 +64,6 @@ axios.interceptors.response.use(undefined, async (err) => {
     }
 });
 
-const rootFloder = `${path.dirname(fileURLToPath(import.meta.url))}\\..\\`;
 
 function wait(ms) {
     return new Promise(resolve => setTimeout(() => resolve(), ms));
