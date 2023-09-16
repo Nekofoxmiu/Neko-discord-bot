@@ -16,7 +16,7 @@ const rootFloder = `${path.dirname(fileURLToPath(import.meta.url))}\\..\\`;
 
 try {
     let data = fs.readFileSync(`${rootFloder}\\setting\\auth.json`);
-    auth_json = JSON.parse(data.toString());
+    let auth_json = JSON.parse(data.toString());
     axios.defaults.headers['cookie'] = `auth_token=${auth_json.twitter.auth}`;
 }
 catch (err) {
