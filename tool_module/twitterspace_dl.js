@@ -415,7 +415,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                         "&features=" + featuresStringBuilder(UserByScreenNameQraphl.queryToken), {
                         "headers": {
                             "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
-                            "x-csrf-token": cookie.x_csrf,
+                            "x-csrf-token": cookie.ct0,
                             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                         },
                         "method": "GET"
@@ -432,7 +432,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                         "&features=" + + featuresStringBuilder(UserByRestIdQraphl.queryToken), {
                         "headers": {
                             "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
-                            "x-csrf-token": cookie.x_csrf,
+                            "x-csrf-token": cookie.ct0,
                             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                         },
                         "method": "GET"
@@ -462,7 +462,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                     "&features=" + featuresStringBuilder(UserByScreenNameQraphl.queryToken), {
                     "headers": {
                         "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
-                        "x-csrf-token": cookie.x_csrf,
+                        "x-csrf-token": cookie.ct0,
                         "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                     },
                     "method": "GET"
@@ -486,7 +486,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                     "&features=" + featuresStringBuilder(UserByRestIdQraphl.queryToken), {
                     "headers": {
                         "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
-                        "x-csrf-token": cookie.x_csrf,
+                        "x-csrf-token": cookie.ct0,
                         "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                     },
                     "method": "GET"
@@ -502,7 +502,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
         let spaceId = await axios("https://twitter.com/i/api/fleets/v1/avatar_content?user_ids=" + userId + "&only_spaces=true", {
             "headers": {
                 "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
-                "x-csrf-token": cookie.x_csrf,
+                "x-csrf-token": cookie.ct0,
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -532,7 +532,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             })) + "&features=" + featuresStringBuilder(AudioSpaceByIdQraphl.queryToken), {
             "headers": {
                 "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
-                "x-csrf-token": cookie.x_csrf,
+                "x-csrf-token": cookie.ct0,
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -549,7 +549,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             "https://twitter.com/i/api/1.1/live_video_stream/status/" + broadcastId + "?client=web&use_syndication_guest_id=false&cookie_set_host=twitter.com", {
             "headers": {
                 "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
-                "x-csrf-token": cookie.x_csrf,
+                "x-csrf-token": cookie.ct0,
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
