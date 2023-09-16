@@ -21,7 +21,7 @@ axios.defaults.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64
 
 axios.interceptors.response.use(undefined, async (err) => {
     try {
-
+        console.dir(err.response.data)
 
         let config = err.config;
         // If config does not exist or the retry option is not set, reject
@@ -65,8 +65,6 @@ axios.interceptors.response.use(undefined, async (err) => {
                 if (config.url) {
                     if ((config.url).match(/UserByScreenName/) || (config.url).match(/AudioSpaceById/) || (config.url).match(/UserByRestId/)) {
 
-                        let spaceDataFeatures;
-
                         await GetQueryId(['UserByScreenName', 'UserByRestId', 'AudioSpaceById'], false, true)
                             .then((response) => {
                                 console.log(`Updated Qraphl List`);
@@ -85,14 +83,11 @@ axios.interceptors.response.use(undefined, async (err) => {
 
 
                         if ((config.url).match(/UserByScreenName/)) { config.url = (config.url).replace(/(?<=api\/graphql\/).+(?=\/UserByScreenName)/, UserByScreenNameQraphl.queryId) }
-                        if ((config.url).match(/UserByRestId/)) { config.url = (config.url).replace(/(?<=api\/graphql\/).+(?=\/UserByRestId)/, UserByScreenNameQraphl.queryId) }
+                        if ((config.url).match(/UserByRestId/)) { config.url = (config.url).replace(/(?<=api\/graphql\/).+(?=\/UserByRestId)/, UserByRestIdQraphl.queryId) }
                         if ((config.url).match(/AudioSpaceById/)) {
-                            for (let i = 0; (AudioSpaceByIdQraphl.queryToken).length > i; i++) {
-                                spaceDataFeatures[(AudioSpaceByIdQraphl.queryToken)[i]] = false;
-                            }
                             config.url = (config.url)
-                                .replace(/(?<=api\/graphql\/).+(?=\/AudioSpaceById)/, UserByScreenNameQraphl.queryId)
-                                .replace(/(?<=\&features\=).+/, encodeURIComponent(JSON.stringify(spaceDataFeatures)));
+                                .replace(/(?<=api\/graphql\/).+(?=\/AudioSpaceById)/, AudioSpaceByIdQraphl.queryId)
+                                .replace(/(?<=\&features\=).+/, featuresStringBuilder(AudioSpaceByIdQraphl.queryToken));
                         }
                     }
                 }
@@ -113,9 +108,9 @@ function ToStrKillQuote(jsonData) {
 
 function GetTime(unixtime) {
     let today;
-    if(unixtime) {
+    if (unixtime) {
         today = new Date(unixtime);
-    } 
+    }
     else {
         today = new Date();
     }
@@ -193,7 +188,7 @@ async function createFfmpeg(whoseSpace, Spacem3u8, output, checktime, waitms) {
 async function GetGuestToken(outdataOrNot) {
 
     outdataOrNot = outdataOrNot || false;
-    try { guestToken = JSON.parse(fs.readFileSync(`${rootFloder}\\data_json\\Token.json`)); }
+    try { guestToken = JSON.parse(fs.readFileSync(`${rootFloder}\\..\\data_json\\Token.json`)); }
     catch (err) {
         try {
             console.log('Failed to load Token.json now clear old file and rebuild one.');
@@ -225,7 +220,7 @@ async function GetGuestToken(outdataOrNot) {
                 .then((response) => { return response.data.guest_token; })
                 .catch((err) => { console.log('get x-guestToken fail.'); return Promise.reject(new Error(err)); });
 
-            fs.writeFileSync(`${rootFloder}\\data_json\\Token.json`, JSON.stringify({ "guestToken": guestToken }));
+            fs.writeFileSync(`${rootFloder}\\..\\data_json\\Token.json`, JSON.stringify({ "guestToken": guestToken }));
 
             return guestToken;
         } catch (err) {
@@ -240,6 +235,14 @@ function getKeyByValue(object, value) {
 }
 //https://stackoverflow.com/questions/9907419/how-to-get-a-key-in-a-javascript-object-by-its-value
 
+function featuresStringBuilder(Feature) {
+    let outputFeatures = {};
+    for (let i = 0; (Feature).length > i; i++) {
+        outputFeatures[(Feature)[i]] = false;
+    }
+    return encodeURIComponent(JSON.stringify(outputFeatures));
+}
+
 async function TwitterSpace(whoseSpace, cookie, configObj) {
     try {
         //初始化開始
@@ -251,7 +254,6 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
         let outputPath = ""
         let searchByName = "";
         let saveIds = "";
-        let spaceDataFeatures = {};
         let idListData = {};
 
         if (!configObj) {
@@ -374,7 +376,8 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
 
                 console.log(`Get UserByScreenNameQraphl: [ ${UserByScreenNameQraphl.queryId} ]`);
                 console.log(`Get UserByRestIdQraphl: [ ${UserByRestIdQraphl.queryId} ]`);
-                console.log(`Get AudioSpaceByIdQraphl: [ ${AudioSpaceByIdQraphl.queryId} ]`);
+                console.log(`Get AudioSpaceByIdQraphl: [ ${AudioSpaceByIdQraphl.queryId} ]`)
+                
             })
             .catch((err) => {
                 console.log('Get Qraphl List fail.');
@@ -404,19 +407,15 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             }
             else {
                 if (searchByName) {
+
                     userId = await axios(`https://twitter.com/i/api/graphql/${UserByScreenNameQraphl.queryId}/UserByScreenName?variables=` + encodeURIComponent(JSON.stringify({
                         "screen_name": `${whoseSpace}`,
-                        "withSafetyModeUserFields": true,
-                        "withSuperFollowsUserFields": true
+                        "withSafetyModeUserFields": true
                     })) +
-                    "&features=" + encodeURIComponent(JSON.stringify({
-                        "responsive_web_twitter_blue_verified_badge_is_enabled": true,
-                        "verified_phone_label_enabled": false,
-                        "responsive_web_twitter_blue_new_verification_copy_is_enabled": false,
-                        "responsive_web_graphql_timeline_navigation_enabled": true
-                    })), {
+                        "&features=" + featuresStringBuilder(UserByScreenNameQraphl.queryToken), {
                         "headers": {
-                            "x-guest-token": guestToken,
+                            "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                            "x-csrf-token": cookie.x_csrf,
                             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                         },
                         "method": "GET"
@@ -429,9 +428,11 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                         "userId": `${userId}`,
                         "withSafetyModeUserFields": true,
                         "withSuperFollowsUserFields": true
-                    })), {
+                    })) +
+                        "&features=" + + featuresStringBuilder(UserByRestIdQraphl.queryToken), {
                         "headers": {
-                            "x-guest-token": guestToken,
+                            "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                            "x-csrf-token": cookie.x_csrf,
                             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                         },
                         "method": "GET"
@@ -456,17 +457,12 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
 
                 userData = await axios(`https://twitter.com/i/api/graphql/${UserByScreenNameQraphl.queryId}/UserByScreenName?variables=` + encodeURIComponent(JSON.stringify({
                     "screen_name": `${whoseSpace}`,
-                    "withSafetyModeUserFields": true,
-                    "withSuperFollowsUserFields": true
-                }) +
-                "&features=" + encodeURIComponent(JSON.stringify({
-                    "responsive_web_twitter_blue_verified_badge_is_enabled": true,
-                    "verified_phone_label_enabled": false,
-                    "responsive_web_twitter_blue_new_verification_copy_is_enabled": false,
-                    "responsive_web_graphql_timeline_navigation_enabled": true
-                }))), {
+                    "withSafetyModeUserFields": true
+                })) +
+                    "&features=" + featuresStringBuilder(UserByScreenNameQraphl.queryToken), {
                     "headers": {
-                        "x-guest-token": guestToken,
+                        "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                        "x-csrf-token": cookie.x_csrf,
                         "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                     },
                     "method": "GET"
@@ -482,14 +478,15 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             }
             else {
                 userId = whoseSpace;
-
                 userData = await axios(`https://twitter.com/i/api/graphql/${UserByRestIdQraphl.queryId}/UserByRestId?variables=` + encodeURIComponent(JSON.stringify({
                     "userId": `${userId}`,
                     "withSafetyModeUserFields": true,
                     "withSuperFollowsUserFields": true
-                })), {
+                })) +
+                    "&features=" + featuresStringBuilder(UserByRestIdQraphl.queryToken), {
                     "headers": {
-                        "x-guest-token": guestToken,
+                        "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                        "x-csrf-token": cookie.x_csrf,
                         "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                     },
                     "method": "GET"
@@ -504,7 +501,8 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
         }
         let spaceId = await axios("https://twitter.com/i/api/fleets/v1/avatar_content?user_ids=" + userId + "&only_spaces=true", {
             "headers": {
-                "cookie": `auth_token=${cookie}`,
+                "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                "x-csrf-token": cookie.x_csrf,
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -521,10 +519,6 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             console.log(`Get spaceId: [ ${spaceId} ]`);
         }
 
-        for (let i = 0; (AudioSpaceByIdQraphl.queryToken).length > i; i++) {
-            spaceDataFeatures[(AudioSpaceByIdQraphl.queryToken)[i]] = false;
-        }
-
         let spaceData = await axios(
             `https://twitter.com/i/api/graphql/${AudioSpaceByIdQraphl.queryId}/AudioSpaceById?variables=` + encodeURIComponent(JSON.stringify({
                 "id": spaceId,
@@ -535,9 +529,10 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                 "withReactionsPerspective": false,
                 "withSuperFollowsTweetFields": true,
                 "withReplays": true,
-            })) + "&features=" + encodeURIComponent(JSON.stringify(spaceDataFeatures)), {
+            })) + "&features=" + featuresStringBuilder(AudioSpaceByIdQraphl.queryToken), {
             "headers": {
-                "x-guest-token": guestToken,
+                "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                "x-csrf-token": cookie.x_csrf,
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -553,7 +548,8 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
         let Spacem3u8 = await axios(
             "https://twitter.com/i/api/1.1/live_video_stream/status/" + broadcastId + "?client=web&use_syndication_guest_id=false&cookie_set_host=twitter.com", {
             "headers": {
-                "x-guest-token": guestToken,
+                "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                "x-csrf-token": cookie.x_csrf,
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -572,7 +568,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                 "title": broadcastTitle,
                 "m3u8": Spacem3u8,
                 "name": whoseSpace,
-                "id":userId,
+                "id": userId,
                 "spaceId": spaceId,
                 "broadcastId": broadcastId,
                 "spaceData": spaceData,
@@ -584,7 +580,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                 "title": broadcastTitle,
                 "m3u8": Spacem3u8,
                 "name": whoseSpace,
-                "id":userId,
+                "id": userId,
                 "spaceId": spaceId,
                 "broadcastId": broadcastId,
                 "spaceData": spaceData,
@@ -618,7 +614,6 @@ TwitterSpace.getM3u8_FromBroadcastId = async (broadcastId) => {
     return Spacem3u8;
 }
 TwitterSpace.getSpaceData_FromSpaceId = async (spaceId) => {
-    let spaceDataFeatures = {};
     await GetQueryId(['UserByScreenName', 'UserByRestId', 'AudioSpaceById'], true, false)
         .then((response) => {
             UserByScreenNameQraphl = response[0];
@@ -636,9 +631,7 @@ TwitterSpace.getSpaceData_FromSpaceId = async (spaceId) => {
 
 
 
-    for (let i = 0; (AudioSpaceByIdQraphl.queryToken).length > i; i++) {
-        spaceDataFeatures[(AudioSpaceByIdQraphl.queryToken)[i]] = false;
-    }
+    
 
     let spaceData = await axios(
         `https://twitter.com/i/api/graphql/${AudioSpaceByIdQraphl.queryId}/AudioSpaceById?variables=` + encodeURIComponent(JSON.stringify({
@@ -650,7 +643,7 @@ TwitterSpace.getSpaceData_FromSpaceId = async (spaceId) => {
             "withReactionsPerspective": false,
             "withSuperFollowsTweetFields": true,
             "withReplays": true,
-        })) + "&features=" + encodeURIComponent(JSON.stringify(spaceDataFeatures)), {
+        })) + "&features=" + featuresStringBuilder(AudioSpaceByIdQraphl.queryToken), {
         "headers": {
             "x-guest-token": GetGuestToken(),
             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"

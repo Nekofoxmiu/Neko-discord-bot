@@ -33,7 +33,7 @@ async function youtubedl(client, interaction) {
     let channelId = interaction.channelId;
     let guildId = interaction.guildId;
 
-    let ytdl = child_process.exec(`ytarchive.exe --merge --add-metadata --no-frag-files --thumbnail --cookies "${rootFloder}\\setting\\yt_cookies.txt" -w -o "${rootFloder}\\youtube video\\%(title)s-%(id)s" ${video_ID} best `, {
+    let ytdl = child_process.exec(`ytarchive.exe --merge --add-metadata --no-frag-files --thumbnail -w -o "${rootFloder}\\youtube video\\%(title)s-%(id)s" ${video_ID} best `, {
         cwd: `${rootFloder}\\exe_tool`,
         maxBuffer: 1024 * 1024 * 1024
     })
@@ -117,7 +117,7 @@ async function youtubedl(client, interaction) {
                 }
                 else {
                     if (data && data !== "\n") {
-                        try { client.guilds.cache.get(guildId).channels.cache.get(channelId).send(data); } catch(err) {console.log(err);} 
+                        try { await client.guilds.cache.get(guildId).channels.cache.get(channelId).send(data); } catch(err) {console.log(err);} 
                         console.log(data);
                     }
 

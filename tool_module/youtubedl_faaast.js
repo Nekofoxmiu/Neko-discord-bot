@@ -33,7 +33,7 @@ async function youtubedl_faaast(client, interaction) {
     let channelId = interaction.channelId;
     let guildId = interaction.guildId;
 
-    let ytdl = child_process.exec(`ytarchive.exe --quiet --merge --add-metadata --no-frag-files --thumbnail --threads 8 -w -o "${rootFloder}\\youtube video\\%(title)s-%(id)s" ${video_ID} best `, {
+    let ytdl = child_process.exec(`ytarchive.exe --merge --add-metadata --no-frag-files --thumbnail --threads 8 -w -o "${rootFloder}\\youtube video\\%(title)s-%(id)s" ${video_ID} best `, {
         cwd: `${rootFloder}\\exe_tool`,
         maxBuffer: 1024 * 1024 * 1024
     })
@@ -73,28 +73,12 @@ async function youtubedl_faaast(client, interaction) {
     ytdl.stderr.on('data', async (data) => {
         try {
             if (data) {
-                data = data.replace(/\x1b\[31m/g, "").replace(/\x1b\[33m/g, "").replace(/\x1b\[0m\x1b\[K/g, "").replace(/\n\B/g, "").replace(/\B\n/g, "");
-                if (data && data !== "\n") {
-                    try { client.guilds.cache.get(guildId).channels.cache.get(channelId).send(data); } catch(err) {console.log(err);} 
-                    process.stdout.write(`${data}\n`);
-                }
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    });
-
-    ytdl.stdout.on('data', async (data) => {
-        try {
-            if (data) {
 
                 data = data.replace(/\x1b\[31m/g, "");
                 data = data.replace(/\x1b\[33m/g, "");
                 data = data.replace(/\x1b\[0m\x1b\[K/g, "");
-                data = data.replace(/\B\n/g, "");
-                data = data.replace(/\r\n\B/g, "\n");
-                data = data.replace(/\B\r\n/g, "");
-                data = data.replace(/\r/g, "\n");
+                data = data.replace(/\n\r/g, "\n");
+                data = data.trim();
 
 
                 if (
@@ -109,15 +93,15 @@ async function youtubedl_faaast(client, interaction) {
                     //process.stdout.write(`${data}\r`);
                 }
                 else if (data.match(/Selected quality/)) {
-                    process.stdout.write(`${data}  ${video_ID}\n`);
+                    console.log(`${data}  ${video_ID}`);
                 }
                 else if (data.match(/Download.+/) || data.match(/Muxing.+/) || data.match(/Final file.+/)) {
-                    process.stdout.write(`${data}\n`);
+                    console.log(data);
                 }
                 else {
                     if (data && data !== "\n") {
                         try { client.guilds.cache.get(guildId).channels.cache.get(channelId).send(data); } catch(err) {console.log(err);} 
-                        process.stdout.write(`${data}\n`);
+                        console.log(data);
                     }
 
                 }

@@ -224,7 +224,7 @@ spaceTrigger.on('message', async (data) => {
         if (data.id) {
             console.log(`Space通知 ->\n`, data);
             let spaceEmbed;
-            await TwitterSpace((data.id), auth.twitter.key, { "record": false, "saveIds": false, "searchByName": false, "outputPath": spaceSavePlace })
+            await TwitterSpace((data.id), auth.twitter, { "record": false, "saveIds": false, "searchByName": false, "outputPath": spaceSavePlace })
                 .then(async (response) => {
                     try {
                         let started_at = response.spaceData.metadata.started_at;
@@ -337,7 +337,7 @@ client.on('messageCreate', async (msg) => {
                     if (data.id) {
                         console.log(`Space通知 ->\n`, data);
                         let spaceEmbed;
-                        await TwitterSpace((data.id), auth.twitter.key, { "record": false, "saveIds": false, "searchByName": false, "outputPath": spaceSavePlace })
+                        await TwitterSpace((data.id), auth.twitter, { "record": false, "saveIds": false, "searchByName": false, "outputPath": spaceSavePlace })
                             .then(async (response) => {
                                 try {
                                     if (response.m3u8 != undefined) {
@@ -367,7 +367,7 @@ client.on('messageCreate', async (msg) => {
                             }
                         }
 
-                        await TwitterSpace((data.id), auth.twitter.key, { "record": true, "saveIds": false, "searchByName": false, "outputPath": spaceSavePlace });
+                        await TwitterSpace((data.id), auth.twitter, { "record": true, "saveIds": false, "searchByName": false, "outputPath": spaceSavePlace });
                     }
                     else {
                         console.log(`space_channel: ${data}`)
@@ -415,7 +415,7 @@ client.on('interactionCreate', async (interaction) => {
                         case 'spacecheck': {
                             try {
                                 let userName = returnValue;
-                                await TwitterSpace(userName, auth.twitter.key, { "record": false }).then(async (response) => {
+                                await TwitterSpace(userName, auth.twitter, { "record": false }).then(async (response) => {
                                     try {
                                         switch (response) {
 
@@ -470,7 +470,7 @@ client.on('interactionCreate', async (interaction) => {
                                 let channelId = interaction.channelId;
                                 let guildId = interaction.guildId;
                                 let userName = returnValue;
-                                TwitterSpace(userName, auth.twitter.key, {
+                                TwitterSpace(userName, auth.twitter, {
                                     "record": true,
                                     "outputPath": spaceSavePlace
                                 })
