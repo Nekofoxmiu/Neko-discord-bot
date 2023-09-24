@@ -8,20 +8,8 @@ yt-dlp
 ffmpeg  
 ytarchive  
     
-登陸設定在  
+# 登陸設定 
 ./setting/ytcookies.txt //選用，沒有沒差，會限直播下載功能用  
 ./setting/auth.json  
 
-
-auth.json 
-```
-{
-  "discord": {
-    "key": "",
-    "id": ""
-  },
-  "twitter":{
-    "key": ""
-  }
-}
-```
+強力推薦使用 npm ci 別用 npm install 天知道依賴項會不會衝突
