@@ -1,4 +1,4 @@
-import GetQueryId from "twitter_queryToken";
+import GetQueryId from "./GetQueryId.js"
 import axios from "axios";
 import tweetJsonToHtml from 'tweet-json-to-html';
 import puppeteer from "puppeteer";

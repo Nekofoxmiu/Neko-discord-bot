@@ -21,7 +21,7 @@ axios.defaults.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64
 
 axios.interceptors.response.use(undefined, async (err) => {
     try {
-        console.dir(err.response.data)
+        console.dir(err)
 
         let config = err.config;
         // If config does not exist or the retry option is not set, reject
@@ -377,7 +377,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                 console.log(`Get UserByScreenNameQraphl: [ ${UserByScreenNameQraphl.queryId} ]`);
                 console.log(`Get UserByRestIdQraphl: [ ${UserByRestIdQraphl.queryId} ]`);
                 console.log(`Get AudioSpaceByIdQraphl: [ ${AudioSpaceByIdQraphl.queryId} ]`)
-                
+
             })
             .catch((err) => {
                 console.log('Get Qraphl List fail.');
@@ -416,6 +416,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                         "headers": {
                             "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
                             "x-csrf-token": cookie.ct0,
+
                             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                         },
                         "method": "GET"
@@ -433,6 +434,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                         "headers": {
                             "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
                             "x-csrf-token": cookie.ct0,
+
                             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                         },
                         "method": "GET"
@@ -463,6 +465,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                     "headers": {
                         "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
                         "x-csrf-token": cookie.ct0,
+
                         "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                     },
                     "method": "GET"
@@ -487,6 +490,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
                     "headers": {
                         "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
                         "x-csrf-token": cookie.ct0,
+
                         "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
                     },
                     "method": "GET"
@@ -503,6 +507,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             "headers": {
                 "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
                 "x-csrf-token": cookie.ct0,
+
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -533,6 +538,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             "headers": {
                 "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
                 "x-csrf-token": cookie.ct0,
+
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -550,6 +556,7 @@ async function TwitterSpace(whoseSpace, cookie, configObj) {
             "headers": {
                 "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
                 "x-csrf-token": cookie.ct0,
+
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -603,7 +610,7 @@ TwitterSpace.getM3u8_FromBroadcastId = async (broadcastId) => {
     }
     let Spacem3u8 = await axios("https://twitter.com/i/api/1.1/live_video_stream/status/" + broadcastId + "?client=web&use_syndication_guest_id=false&cookie_set_host=twitter.com", {
         "headers": {
-            "x-guest-token": GetGuestToken(),
+            "x-guest-token": await GetGuestToken(),
             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
         },
         "method": "GET"
@@ -631,7 +638,7 @@ TwitterSpace.getSpaceData_FromSpaceId = async (spaceId) => {
 
 
 
-    
+
 
     let spaceData = await axios(
         `https://twitter.com/i/api/graphql/${AudioSpaceByIdQraphl.queryId}/AudioSpaceById?variables=` + encodeURIComponent(JSON.stringify({
@@ -645,7 +652,7 @@ TwitterSpace.getSpaceData_FromSpaceId = async (spaceId) => {
             "withReplays": true,
         })) + "&features=" + featuresStringBuilder(AudioSpaceByIdQraphl.queryToken), {
         "headers": {
-            "x-guest-token": GetGuestToken(),
+            "x-guest-token": await GetGuestToken(),
             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
         },
         "method": "GET"
@@ -660,7 +667,7 @@ TwitterSpace.getSpaceData_FromSpaceId = async (spaceId) => {
 
     let Spacem3u8 = await axios("https://twitter.com/i/api/1.1/live_video_stream/status/" + broadcastId + "?client=web&use_syndication_guest_id=false&cookie_set_host=twitter.com", {
         "headers": {
-            "x-guest-token": GetGuestToken(),
+            "x-guest-token": await GetGuestToken(),
             "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
         },
         "method": "GET"

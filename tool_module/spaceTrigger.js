@@ -16,12 +16,11 @@ const rootFloder = `${path.dirname(fileURLToPath(import.meta.url))}\\..\\`;
 
 try {
     let data = fs.readFileSync(`${rootFloder}\\setting\\auth.json`);
-    auth_json = JSON.parse(data.toString());
+    let auth_json = JSON.parse(data.toString());
     axios.defaults.headers['cookie'] = `auth_token=${auth_json.twitter.auth}`;
 }
 catch (err) {
-    console.log('Failed to load auth.json now clear old file and rebuild one.');
-    fs.writeFileSync(`${rootFloder}\\data_json\\spacetrackList.json`, JSON.stringify({}));
+    console.log(err);
 }
 
 

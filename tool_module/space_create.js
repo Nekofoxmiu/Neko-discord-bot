@@ -10,6 +10,10 @@ import fs from "fs"
 
 const rootFloder = `${path.dirname(fileURLToPath(import.meta.url))}\\..`;
 
+const auth = JSON.parse(fs.readFileSync(`${rootFloder}\\setting\\auth.json`));
+
+const cookie = auth.twitter;
+
 var guestToken = small_tool.GetGuestToken(false);
 
 async function space_create(spaceTrigger, interaction) {
@@ -74,7 +78,8 @@ async function space_create(spaceTrigger, interaction) {
         })) +
             "&features=" + encodeURIComponent(JSON.stringify(userId_Features)), {
             "headers": {
-                "x-guest-token": await guestToken,
+                "cookie": `auth_token=${cookie.auth}; ct0=${cookie.ct0}`,
+                "x-csrf-token": cookie.ct0,
                 "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
             },
             "method": "GET"
@@ -93,7 +98,7 @@ async function space_create(spaceTrigger, interaction) {
                 interaction.editReply(`${userName} 加入追蹤失敗，請確認是否打錯，若無錯誤請再試一次`);
                 console.log(`伺服器：${guildId}　頻道： ${channelId} userId 錯誤`)
             })
-        
+
         idListData[userName] = userId;
         fs.writeFileSync(`${rootFloder}\\data_json\\ID_List.json`, JSON.stringify(idListData, null, '    '));
     }
